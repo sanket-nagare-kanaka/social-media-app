@@ -1,22 +1,24 @@
-import type { Metadata } from "next";
+'use client';
+
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AnimatedBackground from "@/components/layout/AnimatedBackground";
 import Sidebar from "@/components/layout/Sidebar";
-
-export const metadata: Metadata = {
-  title: "Social Publishing Platform",
-  description: "A modern social publishing and moderation platform for communities, creators, and enterprises.",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+
+  // Define which paths should use the full-width layout
+  const isManagementScreen =
+    pathname?.startsWith('/moderation') ||
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/compliance');
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -33,8 +35,8 @@ export default function RootLayout({
           <div className="flex min-h-screen relative z-0">
             <Sidebar />
             <main className="flex-1 ml-[72px] lg:ml-[275px] relative">
-              {/* Glassmorphic container for main content to stand out against animated background */}
-              <div className="mx-auto w-full max-w-[640px] px-4 py-8 pb-32">
+              {/* Dynamic container width based on route */}
+              <div className={`mx-auto w-full px-4 py-8 pb-32 transition-all duration-300 ${isManagementScreen ? 'max-w-[1400px]' : 'max-w-[640px]'}`}>
                 <div className="backdrop-blur-md bg-background/60 dark:bg-background/40 border border-primary/10 rounded-2xl shadow-xl p-4 sm:p-6 min-h-[80vh]">
                   {children}
                 </div>

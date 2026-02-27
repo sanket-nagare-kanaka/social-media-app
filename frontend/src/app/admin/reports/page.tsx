@@ -71,7 +71,7 @@ export default function UserReportsPage() {
                 </TabsList>
 
                 {/* Suspensions */}
-                <TabsContent value="suspensions" className="mt-4 space-y-3">
+                <TabsContent value="suspensions" className="mt-4 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                     {suspensionList.map(item => (
                         <Card key={item.id}>
                             <CardContent className="pt-6">
@@ -90,7 +90,7 @@ export default function UserReportsPage() {
                 </TabsContent>
 
                 {/* Appeals */}
-                <TabsContent value="appeals" className="mt-4 space-y-3">
+                <TabsContent value="appeals" className="mt-4 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                     {appealList.map(item => (
                         <Card key={item.id}>
                             <CardContent className="pt-6">
@@ -117,7 +117,7 @@ export default function UserReportsPage() {
                 </TabsContent>
 
                 {/* Repeat Offenders */}
-                <TabsContent value="repeat" className="mt-4 space-y-3">
+                <TabsContent value="repeat" className="mt-4 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                     {repeatOffenders.map(item => (
                         <Card key={item.user}>
                             <CardContent className="pt-6">

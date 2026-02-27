@@ -43,7 +43,7 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Metric Cards */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {metrics.map(m => (
                     <Card key={m.label}>
                         <CardContent className="pt-6">
@@ -67,7 +67,7 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">Active Users (30 Day)</CardTitle>
@@ -106,7 +106,7 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Bottom Row */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">Abuse Rate</CardTitle>

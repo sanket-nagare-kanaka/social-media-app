@@ -113,11 +113,11 @@ export default function ModerationDashboard() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]">Post ID</TableHead>
-                                    <TableHead>User</TableHead>
-                                    <TableHead className="w-[100px]">Risk Score</TableHead>
-                                    <TableHead className="w-[60px] text-center">Reports</TableHead>
-                                    <TableHead>Category</TableHead>
+                                    <TableHead className="w-[120px]">Post ID</TableHead>
+                                    <TableHead className="w-[150px]">User</TableHead>
+                                    <TableHead className="w-[120px]">Risk Score</TableHead>
+                                    <TableHead className="w-[80px] text-center">Reports</TableHead>
+                                    <TableHead className="w-[150px]">Category</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead className="w-[90px]">Date</TableHead>
                                     <TableHead className="text-right w-[100px]">Actions</TableHead>
