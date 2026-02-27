@@ -1,0 +1,149 @@
+.adminPage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.pageTitle {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionHeader h2 {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+}
+
+.tableCard {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.userGrid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr 0.8fr 0.8fr 1fr;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface-hover);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.userRow {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr 0.8fr 0.8fr 1fr;
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--color-divider);
+    align-items: center;
+    font-size: var(--text-sm);
+}
+
+.userRow:hover {
+    background: var(--color-surface-hover);
+}
+
+.rowActions {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.configCard {
+    padding: var(--space-5) !important;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.configTitle {
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.configGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.configItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.configItem label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sliderRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.slider {
+    flex: 1;
+    accent-color: var(--color-primary);
+}
+
+.checkboxGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .configGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkboxGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .userGrid,
+    .userRow {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .userGrid span:nth-child(2),
+    .userRow span:nth-child(2),
+    .userGrid span:nth-child(5),
+    .userRow span:nth-child(5),
+    .userGrid span:nth-child(4),
+    .userRow span:nth-child(4) {
+        display: none;
+    }
+}

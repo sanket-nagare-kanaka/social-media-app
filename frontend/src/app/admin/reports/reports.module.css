@@ -1,0 +1,81 @@
+.reportsPage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.pageTitle {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.tableCard {
+    padding: 0 !important;
+}
+
+.tableRow {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-divider);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.rowMain {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rowMeta {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    align-items: center;
+}
+
+.rowMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rowActions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.auditRow {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.auditRow:last-child {
+    border-bottom: none;
+}
+
+.auditDot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.auditContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}

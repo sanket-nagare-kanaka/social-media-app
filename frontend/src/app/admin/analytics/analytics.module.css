@@ -1,0 +1,207 @@
+.analyticsPage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pageTitle {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.exportBtns {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+.metricCard {
+    padding: var(--space-5) !important;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.metricIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metricInfo {
+    flex: 1;
+}
+
+.metricLabel {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    font-weight: var(--weight-medium);
+}
+
+.metricValue {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-extrabold);
+    margin-top: var(--space-1);
+}
+
+.chartsRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.chartCard {
+    min-height: 280px;
+}
+
+.chartPlaceholder {
+    padding: var(--space-4);
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.barChart {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    width: 100%;
+    height: 100%;
+}
+
+.bar {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+}
+
+.barFill {
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+}
+
+.barFill:hover {
+    opacity: 1;
+}
+
+.barFillGreen {
+    width: 100%;
+    height: 100%;
+    background: var(--color-success);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.8;
+}
+
+.barFillGreen:hover {
+    opacity: 1;
+}
+
+.abuseRate {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.gaugeContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.gauge {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-full);
+    background: var(--color-danger-bg);
+    border: 4px solid var(--color-danger);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gaugeValue {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-danger);
+}
+
+.gaugeLabel {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+.keywordsList {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.keywordRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+.keywordRank {
+    font-weight: var(--weight-bold);
+    color: var(--color-text-tertiary);
+    width: 24px;
+}
+
+.keywordText {
+    font-weight: var(--weight-semibold);
+    min-width: 100px;
+}
+
+.keywordBar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-surface-hover);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.keywordCount {
+    font-weight: var(--weight-bold);
+    color: var(--color-danger);
+    min-width: 30px;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .metricsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chartsRow {
+        grid-template-columns: 1fr;
+    }
+}
