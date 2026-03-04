@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
+from app.routers import auth as auth_router
+from app.routers import admin as admin_router
 
 
 @asynccontextmanager
@@ -34,6 +36,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register routers
+app.include_router(auth_router.router)
+app.include_router(admin_router.router)
 
 
 # Health check

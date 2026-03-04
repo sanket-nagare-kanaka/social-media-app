@@ -1,22 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { createClient } from '@/lib/supabase';
 
 export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginForm />
+        </Suspense>
+    );
+}
+
+function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect') || '/';
+    const supabase = createClient();
+
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Login attempt', { email, password });
+        setIsLoading(true);
+        setError(null);
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            setError(error.message);
+            setIsLoading(false);
+        } else {
+            router.push(redirect);
+            router.refresh();
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback?next=${redirect}`,
+            },
+        });
+
+        if (error) {
+            setError(error.message);
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -41,6 +86,12 @@ export default function LoginPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-4">
+                            {error && (
+                                <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+                                    {error}
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email address</Label>
                                 <Input
@@ -50,6 +101,7 @@ export default function LoginPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    disabled={isLoading}
                                     className="bg-muted/50"
                                 />
                             </div>
@@ -68,6 +120,7 @@ export default function LoginPage() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
+                                        disabled={isLoading}
                                         className="bg-muted/50 pr-10"
                                     />
                                     <button
@@ -80,8 +133,8 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
-                            <Button type="submit" className="w-full font-bold shadow-md shadow-primary/20">
-                                Sign In
+                            <Button type="submit" className="w-full font-bold shadow-md shadow-primary/20" disabled={isLoading}>
+                                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...</> : 'Sign In'}
                             </Button>
                         </form>
 
@@ -95,15 +148,20 @@ export default function LoginPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <Button variant="outline" className="w-full bg-muted/50 hover:bg-muted font-bold">
+                            <Button
+                                variant="outline"
+                                className="w-full bg-muted/50 hover:bg-muted font-bold"
+                                onClick={handleGoogleLogin}
+                                disabled={isLoading}
+                            >
                                 Google
                             </Button>
-                            <Button variant="outline" className="w-full bg-muted/50 hover:bg-muted font-bold">
+                            <Button variant="outline" className="w-full bg-muted/50 hover:bg-muted font-bold" disabled>
                                 Apple
                             </Button>
                         </div>
 
-                        <div className="mt-6 rounded-lg bg-blue-500/10 p-3 flexItems-start gap-2 border border-blue-500/20">
+                        <div className="mt-6 rounded-lg bg-blue-500/10 p-3 flex items-start gap-2 border border-blue-500/20">
                             <div className="text-blue-500 mt-0.5"><CheckCircle2 className="h-4 w-4" /></div>
                             <div className="text-xs text-blue-700 dark:text-blue-400">
                                 <span className="font-bold block mb-0.5">Moderator / Admin Login</span>

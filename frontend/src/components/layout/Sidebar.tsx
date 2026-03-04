@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
     Home,
     Search,
@@ -19,6 +19,8 @@ import {
     FileWarning,
     ClipboardCheck,
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface NavItem {
     label: string;
@@ -37,7 +39,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
-    { label: 'Moderation', href: '/moderation', icon: <Shield className="h-6 w-6" />, roles: ['moderator', 'admin'] },
+    { label: 'Moderation', href: '/moderation', icon: <Shield className="h-6 w-6" />, roles: ['community_moderator', 'senior_moderator', 'admin'] },
     { label: 'Reports', href: '/admin/reports', icon: <FileWarning className="h-6 w-6" />, roles: ['admin'] },
     { label: 'Analytics', href: '/admin/analytics', icon: <BarChart3 className="h-6 w-6" />, roles: ['admin', 'analyst'] },
     { label: 'Compliance', href: '/compliance', icon: <ClipboardCheck className="h-6 w-6" />, roles: ['compliance_officer', 'admin'] },
@@ -46,6 +48,8 @@ const adminNavItems: NavItem[] = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user, profile, signOut, isLoading } = useAuth();
     const [isDark, setIsDark] = useState(false);
 
     useEffect(() => {
@@ -75,6 +79,32 @@ export default function Sidebar() {
             ? `bg-primary/10 text-primary font-bold`
             : `text-muted-foreground hover:bg-muted hover:text-foreground font-semibold`);
 
+    const userRole = profile?.role || 'user';
+
+    // Filter admin nav items based on user role
+    const visibleAdminItems = adminNavItems.filter(
+        (item) => !item.roles || item.roles.includes(userRole)
+    );
+
+    const handleLogout = async () => {
+        await signOut();
+        router.push('/login');
+    };
+
+    // Get user initials
+    const getInitials = () => {
+        if (profile?.display_name) {
+            return profile.display_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+        if (profile?.username) {
+            return profile.username.slice(0, 2).toUpperCase();
+        }
+        if (user?.email) {
+            return user.email.slice(0, 2).toUpperCase();
+        }
+        return 'U';
+    };
+
     return (
         <>
             {/* Desktop Sidebar */}
@@ -102,21 +132,38 @@ export default function Sidebar() {
                     ))}
                 </nav>
 
-                {/* Admin Section */}
-                <div className="mt-8 flex flex-col gap-1">
-                    <div className="mb-2 hidden px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground lg:block">
-                        Management
+                {/* Admin Section - Only show if user has relevant management roles */}
+                {visibleAdminItems.length > 0 && (
+                    <div className="mt-8 flex flex-col gap-1">
+                        <div className="mb-2 hidden px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground lg:block">
+                            Management
+                        </div>
+                        {visibleAdminItems.map((item) => (
+                            <Link key={item.href} href={item.href} className={navLinkClass(isActive(item.href))}>
+                                <span className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
+                                <span className="hidden lg:block">{item.label}</span>
+                            </Link>
+                        ))}
                     </div>
-                    {adminNavItems.map((item) => (
-                        <Link key={item.href} href={item.href} className={navLinkClass(isActive(item.href))}>
-                            <span className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200">{item.icon}</span>
-                            <span className="hidden lg:block">{item.label}</span>
-                        </Link>
-                    ))}
-                </div>
+                )}
 
                 {/* Bottom Actions */}
                 <div className="mt-auto flex flex-col gap-1 pt-8">
+                    {/* User Profile Card */}
+                    {user && (
+                        <div className="mb-4 flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 px-3 py-2.5">
+                            <Avatar className="h-8 w-8 flex-shrink-0">
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                                    {getInitials()}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="hidden lg:block overflow-hidden">
+                                <p className="text-sm font-bold truncate">{profile?.display_name || profile?.username || 'User'}</p>
+                                <p className="text-xs text-muted-foreground truncate">@{profile?.username || 'user'}</p>
+                            </div>
+                        </div>
+                    )}
+
                     <button onClick={toggleTheme} className={navLinkClass(false) + " w-full content-start justify-start"}>
                         <span className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200">
                             {isDark ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
@@ -125,7 +172,10 @@ export default function Sidebar() {
                             {isDark ? 'Light Mode' : 'Dark Mode'}
                         </span>
                     </button>
-                    <button className={navLinkClass(false) + " w-full content-start justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"}>
+                    <button
+                        onClick={handleLogout}
+                        className={navLinkClass(false) + " w-full content-start justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"}
+                    >
                         <span className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200"><LogOut className="h-6 w-6" /></span>
                         <span className="hidden lg:block">Logout</span>
                     </button>
