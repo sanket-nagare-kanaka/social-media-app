@@ -1,0 +1,95 @@
+You are a senior frontend developer building an enterprise social platform with Next.js 15 App Router. You have deep expertise in layout patterns, routing architecture, and responsive navigation design.
+
+I have a social publishing platform with Next.js 15 (App Router), Tailwind CSS v4, shadcn/ui, and a custom glassmorphic design system with animated background. I need to create all the page stubs and a sidebar navigation system, using Next.js route groups for layout separation.
+
+The existing setup includes the design system with dark/light mode, animated background, and glassmorphism, shadcn/ui components (avatar, button, badge, tooltip, etc.), Lucide React icons, and a useAuth hook from lib/auth-context.tsx for user context.
+
+
+ROUTE STRUCTURE:
+
+Create the following route groups and pages using Next.js App Router:
+
+Root level:
+- layout.tsx (root layout that loads fonts, AuthProvider, theme)
+- page.tsx (home feed at /)
+- globals.css (already exists)
+
+Auth route group at (auth)/ with NO sidebar:
+- layout.tsx (minimal layout, centered card, no sidebar)
+- login/page.tsx
+- signup/page.tsx
+- help/page.tsx
+
+Main route group at (main)/ WITH sidebar:
+- layout.tsx (layout with sidebar)
+- explore/page.tsx
+- create/page.tsx
+- profile/page.tsx
+- communities/page.tsx
+- notifications/page.tsx
+
+Admin section at admin/ with full-width layout:
+- page.tsx (admin dashboard)
+- analytics/page.tsx
+- reports/page.tsx
+
+Moderation section at moderation/ with full-width layout:
+- page.tsx (moderation queue)
+
+Compliance section at compliance/ with full-width layout:
+- page.tsx (compliance dashboard)
+
+
+SIDEBAR COMPONENT (components/layout/Sidebar.tsx):
+
+Build a responsive sidebar navigation with a brand header at the top showing the platform logo or name.
+
+The navigation items should have role-based visibility:
+- Home (Home icon, path /) visible to all authenticated users
+- Explore (Search icon, path /explore) visible to all authenticated users
+- Create (PlusSquare icon, path /create) visible to all authenticated users
+- Notifications (Heart icon, path /notifications) visible to all authenticated users
+- Profile (User icon, path /profile) visible to all authenticated users
+- Communities (Users icon, path /communities) visible to all authenticated users
+- Moderation (Shield icon, path /moderation) visible to community_moderator, senior_moderator, and admin
+- Analytics (BarChart3 icon, path /admin/analytics) visible to admin and analyst
+- Reports (FileWarning icon, path /admin/reports) visible to admin only
+- Compliance (ClipboardCheck icon, path /compliance) visible to compliance_officer and admin
+- Admin (Settings icon, path /admin) visible to admin only
+
+The active route should be highlighted with a primary color background and a left border accent.
+
+At the bottom of the sidebar, include a user section with an avatar showing user initials from the profile display_name or username, the username displayed below, a dark/light mode toggle button using Moon and Sun icons, and a logout button.
+
+For responsive behavior, show a fixed left sidebar at 280px width on desktop, and an off-canvas slide-in sheet triggered by a hamburger menu on mobile.
+
+The sidebar should filter navigation items based on the user's role from useAuth().profile.role.
+
+
+CLIENT LAYOUT WRAPPER (components/layout/ClientLayoutWrapper.tsx):
+
+Create a wrapper component that wraps the main content area with the animated background, applies the glassmorphic content container, and handles the layout shift between auth pages (centered, no sidebar) and main pages (sidebar plus content).
+
+
+RIGHT SIDEBAR (components/layout/RightSidebar.tsx):
+
+Create a decorative right sidebar with a "Who to follow" suggestions section showing user cards, a "Trending topics" section with a hashtag list, and footer links for About, Terms, and Privacy. This should only be visible on desktop, hidden on mobile.
+
+
+LAYOUT DIFFERENCES:
+
+Auth pages in (auth)/ should have centered content card, no sidebar, just the animated background behind a glassmorphic form.
+
+Regular pages in (main)/ and the home page should have sidebar on the left, content centered at max-width 640px, and right sidebar on desktop.
+
+Management pages (admin, moderation, compliance) should have sidebar on the left and content at full-width with no max-width constraint.
+
+
+ROOT LAYOUT (layout.tsx):
+
+Import Plus Jakarta Sans from next/font/google and set it as the default font for the entire app. Wrap children in AuthProvider from lib/auth-context.tsx. Include meta tags for SEO with title and description. Add the dark class to the html element by default.
+
+
+ACCEPTANCE CRITERIA:
+
+All 13 pages should render without errors even with placeholder content. The sidebar should show and hide items based on user role. The active route should be visually highlighted in the sidebar. Auth pages should have no sidebar, just a centered card on the animated background. Admin, moderation, and compliance pages should use full-width layout. Regular pages should be centered at 640px max-width. The dark/light mode toggle should work from the sidebar. The logout button should call signOut() and redirect to /login. The mobile sidebar should slide in from the left as a sheet overlay.

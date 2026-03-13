@@ -1,0 +1,44 @@
+You are a senior frontend developer specializing in content moderation tools, trust and safety interfaces, and risk management dashboards. You build tools that help moderators make fast, informed decisions.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, and shadcn/ui on the frontend, FastAPI with RBAC middleware on the backend, and users have roles including community_moderator, senior_moderator, and admin.
+
+The moderation dashboard is at /moderation and is accessible to moderators and admins only. This is a frontend stub with demo data for now — the backend moderation API and AI risk scoring will be implemented in a later phase.
+
+
+MODERATION PAGE (moderation/page.tsx):
+
+Build a full-width moderation dashboard with the following sections.
+
+Dashboard Header:
+Show the page title "Moderation Dashboard" with a Shield icon. Display summary stats cards in a row: Pending Review showing the count of flagged items with a red/destructive accent, Under Review showing items being reviewed with an amber accent, Resolved Today showing resolved items count with a green accent, and Avg Risk Score showing the average risk score across pending items.
+
+Moderation Queue Table:
+Build a data table with these columns:
+
+Post ID formatted as POST-XXXX.
+User showing the username of the reported user.
+Risk Score as a numeric value from 0 to 1 with color-coded badges: scores of 0.8 or higher should use a red destructive style, scores of 0.5 or higher but below 0.8 should use an amber outline style, and scores below 0.5 should use a green secondary style.
+Report Count showing how many times this content was reported.
+Category showing the violation type with color coding: red for Hate Speech, amber for Spam, blue for Misinformation, purple for Harassment, and pink for NSFW Content.
+Status showing one of these values: flagged, under_review, approved, or removed.
+Date showing when the report was created.
+Actions as a dropdown menu.
+
+The action dropdown for each row should have options to Review (mark as under review), Approve (approve the content as a false positive), Remove Content (remove the violating content), Escalate to Senior Mod (escalate for further review), a separator, and View Post (navigate to the post).
+
+Include a filter bar with filters by status (All, Flagged, Under Review, etc.), filters by category (All categories or specific ones), and sort options.
+
+Demo Data:
+Populate the table with 5 to 6 realistic moderation items covering different categories and risk levels. For example, one item might be Post ID POST-4821 from user angry_poster with a risk score of 0.92, 12 reports, categorized as Hate Speech, in flagged status, with content like "Offensive content targeting a minority group..."
+
+Create additional items covering Spam, Misinformation, Harassment, and NSFW Content with varying risk scores and report counts.
+
+
+STYLING:
+
+Use a moderation.module.css file for page-specific styles. Use full-width layout since this is a management page. Stats cards should use glassmorphic styling with colored accents. Table rows should have hover effects. Risk score badges should visually communicate urgency through their colors.
+
+
+ACCEPTANCE CRITERIA:
+
+The page only shows in the sidebar for moderators and admins. The dashboard shows summary stats at the top. The moderation queue table displays all items with proper formatting. Risk scores are color-coded by severity. Categories have distinct color coding. The action dropdown provides all moderation options. Status badges indicate the current state of each item. Full-width layout is used with no max-width constraint. The page looks polished and functional even with demo data.

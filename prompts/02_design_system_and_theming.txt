@@ -1,0 +1,43 @@
+You are an expert UI/UX designer and frontend developer specializing in modern, premium web interfaces. You create designs that feel like Instagram meets Dribbble — vibrant, animated, and polished.
+
+I have a social publishing platform already scaffolded with Next.js 15, Tailwind CSS v4, and shadcn/ui. I need a complete design system that feels premium and Instagram-inspired. The platform should look stunning at first glance, not like a basic MVP.
+
+The existing setup includes Next.js 15 with App Router and TypeScript, Tailwind CSS v4 with the tailwindcss-animate plugin, shadcn/ui component library, and Plus Jakarta Sans font from Google Fonts.
+
+
+COLOR PALETTE AND THEME:
+
+Create a vibrant, Instagram-inspired color scheme. Use a primary gradient going from #F58529 through #DD2A7B to #8134AF (Instagram colors) for branding accents. Use a vivid purple primary for interactive elements. All CSS custom properties should use the oklch color space (modern approach).
+
+Implement both dark mode (as the default) and light mode with a toggle. Define all design tokens as CSS custom properties in globals.css. You need: background, foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring, chart-1 through chart-5 for analytics, a radius variable for border radius consistency, and a full sidebar token set (sidebar, sidebar-foreground, sidebar-primary, sidebar-primary-foreground, sidebar-accent, sidebar-accent-foreground, sidebar-border, sidebar-ring).
+
+
+ANIMATED BACKGROUND:
+
+Create an AnimatedBackground.tsx component in components/layout/ with these elements:
+
+Three floating gradient blobs using CSS animations. Use purple, pink, and blue gradient blobs. The animate-blob keyframes should have a 10-second duration with alternate direction and cubic-bezier easing. Stagger the animations using animation-delay-2000 and animation-delay-4000 utility classes.
+
+Add a parallax star field effect using three layers: stars-layer-1, stars-layer-2, and stars-layer-3. Each layer should use radial gradients at different positions and sizes, animate with a scrolling upward keyframe called animStar at different speeds per layer, and have different opacity levels (1.0, 0.7, and 0.4 respectively).
+
+The background should be fixed position, full viewport, and sit behind all content. Use mix-blend-mode and low opacity so the blobs enhance without overpowering. Apply a subtle backdrop-blur to content cards for a glassmorphism effect.
+
+
+CSS UTILITIES:
+
+Add these custom utilities to globals.css: a scrollbar-hide class that hides the scrollbar across all browsers, the animate-blob keyframes, animation-delay-2000 and animation-delay-4000 modifier classes, and the star layer utilities with their respective keyframes.
+
+
+SHADCN UI COMPONENTS:
+
+Install and configure these shadcn/ui primitives: avatar, badge, button, card, dialog, dropdown-menu, input, label, progress, select, separator, sheet, slider, switch, table, tabs, textarea, and tooltip. All components should use the design tokens defined above and look cohesive with the glassmorphic dark theme.
+
+
+DESIGN PRINCIPLES:
+
+For glassmorphism, content cards should use semi-transparent backgrounds with backdrop blur for a frosted glass look. Add micro-animations on hover states and transitions at 200ms ease with scale transforms on interactive elements. Use Plus Jakarta Sans for everything, with extra-bold weight for headings and medium weight for body text. Use consistent spacing from the Tailwind scale with generous padding in cards. Set the base radius to 0.625rem, use extra-large rounding for cards, and full rounding for avatars.
+
+
+ACCEPTANCE CRITERIA:
+
+Dark mode should be the default, with a working light mode toggle. Animated gradient blobs should be visible behind content and smoothly animate. The star field parallax effect should have three distinct visible layers. All 18 shadcn/ui components should render correctly with the custom theme. Content cards should have a visible frosted glass effect. The color palette should feel cohesive and premium with no jarring combinations.

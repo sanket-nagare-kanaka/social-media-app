@@ -1,0 +1,89 @@
+You are a senior full-stack developer specializing in content management systems, social media feeds, and rich media publishing. You have deep expertise in PostgreSQL, Supabase, FastAPI, and React.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, shadcn/ui, and a glassmorphic design on the frontend, FastAPI with RBAC middleware on the backend, Supabase (PostgreSQL 17) as the database, a working auth flow with the useAuth() hook and JWT validation, and Supabase Storage for media uploads.
+
+I need to build the complete content publishing engine supporting multiple post types with a full lifecycle from draft to published to archived or removed.
+
+
+DATABASE SCHEMA:
+
+Create a posts table with these columns: id as auto-generated UUID primary key, author_id as UUID referencing profiles(id), type as text with a check constraint allowing text/image/video/poll/thread, content as text (optional), media_url as text (optional), status as text defaulting to 'draft' with a check constraint allowing draft/published/scheduled/archived/removed, published_at as timestamptz (optional), scheduled_for as timestamptz (optional), parent_id as UUID referencing posts(id) for thread children, created_at and updated_at both defaulting to NOW().
+
+Create a polls table with: id as auto-generated UUID primary key, post_id as UUID referencing posts(id) with cascade delete, question as text, and ends_at as timestamptz (optional).
+
+Create a poll_options table with: id as auto-generated UUID primary key, poll_id as UUID referencing polls(id) with cascade delete, label as text, and position as integer defaulting to 0.
+
+Create a poll_votes table with: id as auto-generated UUID primary key, poll_id as UUID referencing polls(id) with cascade delete, option_id as UUID referencing poll_options(id), user_id as UUID referencing profiles(id), created_at defaulting to NOW(), and a unique constraint on poll_id and user_id combined.
+
+Enable RLS on all tables with appropriate policies.
+
+
+BACKEND - POST SERVICE (services/post_service.py):
+
+Create a PostService class with these methods:
+
+create_post(user_id, data): Support all 5 post types (text, image, video, poll, thread). For polls, create the poll record and poll_options. For threads, create the parent post and child posts with parent_id. Apply rate limiting of max 10 posts per hour per user. Set published_at to NOW() if the status is "published".
+
+get_feed(page, per_page): Return only published posts ordered by published_at in descending order. Exclude thread children where parent_id is not null. Join with the profiles table to include author info (username, display_name, avatar_url, is_verified). For poll posts, include poll data with options and vote counts. For thread posts, include thread children with their content and author info. Return pagination metadata with posts, total, page, per_page, and has_more.
+
+get_post(post_id): Return a single post with full data.
+
+update_post(post_id, user_id, data, is_admin): Update content or status, allowed for the author or admin only.
+
+delete_post(post_id, user_id, is_admin): Soft-delete by setting status to "removed".
+
+publish_post(post_id, user_id): Change a draft to published and set published_at.
+
+get_drafts(user_id): Get all drafts for a user.
+
+get_user_posts(user_id, page, per_page): Get a user's published posts with pagination.
+
+vote_poll(post_id, option_id, user_id): Cast or change a poll vote using upsert logic.
+
+
+BACKEND - POSTS ROUTER (routers/posts.py):
+
+POST /api/posts: Create a post. Requires authentication.
+GET /api/posts: Get the feed with pagination. Public access.
+GET /api/posts/me/drafts: Get the current user's drafts. Requires authentication.
+GET /api/posts/user/{user_id}: Get a specific user's posts. Public access.
+GET /api/posts/{post_id}: Get a single post. Public access.
+PUT /api/posts/{post_id}: Update a post. Requires authentication, only author or admin.
+DELETE /api/posts/{post_id}: Soft-delete a post. Requires authentication, only author or admin.
+POST /api/posts/{post_id}/publish: Publish a draft. Requires authentication.
+POST /api/posts/{post_id}/vote: Vote on a poll. Requires authentication.
+
+
+FRONTEND - HOME FEED (page.tsx):
+
+Build the home feed page at the root path /.
+
+Create a PostCard component that displays a single post with: author avatar (using initials as fallback), username, verification badge, and timestamp in relative format like "2h ago". Show the post content as text body. Display media (image or video) if applicable. For poll posts, show votable options with vote counts, progress bars, and total votes. For thread posts, show the parent and child posts in a connected thread view. Include an action bar with Like (Heart icon), Comment (MessageCircle icon), Repost (Repeat2 icon), Bookmark, and Share buttons. Add a "More" dropdown with Report and Block user options. Show the like count (mocked for now since the engagement system is a future phase).
+
+Implement infinite scroll: load more posts as the user scrolls down. Show a loading spinner at the bottom while fetching. Display a "You've seen all posts" message when there are no more posts. The initial load should fetch the first page of 20 posts.
+
+Show an empty state message like "No posts yet. Be the first to share something!" when the feed is empty.
+
+
+FRONTEND - CREATE POST PAGE ((main)/create/page.tsx):
+
+Build a rich post creation interface at /create.
+
+Include a post type selector with tabs or buttons for Text, Image, Video, Poll, and Thread, using appropriate icons (ImageIcon, Film, BarChart2, MessageSquare).
+
+For text posts, show a content textarea with character count.
+
+For image and video posts, show a content textarea plus a file upload area with drag and drop support, a file preview showing an image thumbnail or video filename, upload to Supabase Storage bucket, and a remove media button.
+
+For poll posts, show a question input and 2 to 6 option inputs with add and remove buttons. Poll options should auto-number by position.
+
+For thread posts, show a first post content textarea. Include an "Add to thread" button to add child posts. Each child post gets its own content area. Allow removing individual thread posts.
+
+For publish controls, include a "Publish" button that creates with status published, a "Save as Draft" button that creates with status draft, and a schedule for later date picker as a placeholder for the future.
+
+Provide feedback: a success state with a green checkmark and messages like "Post published!" or "Draft saved!", error handling with descriptive messages, and loading state on buttons during submission.
+
+
+ACCEPTANCE CRITERIA:
+
+All 5 post types can be created (text, image, video, poll, thread). Posts appear in the home feed in reverse chronological order. Poll voting works and the user can vote and see updated counts. Thread posts show as connected posts with parent and children. Media uploads work via drag and drop and file picker. Drafts can be saved and retrieved later. Infinite scroll loads more posts on scroll. Rate limiting prevents more than 10 posts per hour. Soft-delete works and removed posts disappear from the feed. Only post authors and admins can edit or delete posts.

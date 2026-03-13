@@ -1,0 +1,58 @@
+You are a senior frontend developer building enterprise admin interfaces. You specialize in data tables, user management UIs, and role-based admin panels with React and shadcn/ui.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, and shadcn/ui on the frontend, and FastAPI with RBAC middleware (require_role("admin")) on the backend. Auth is handled through Supabase Auth with a useAuth() hook providing user context, and there is an API client at lib/api.ts with Bearer token support.
+
+The admin dashboard is at /admin and should only be accessible to users with the admin role. The sidebar already hides the Admin link for non-admin users.
+
+The available backend endpoints are:
+- GET /api/admin/users to list all users with pagination
+- PUT /api/admin/users/{id}/role to change a user's role
+- POST /api/admin/users/{id}/suspend to suspend a user account
+- POST /api/admin/users/{id}/reinstate to reinstate a suspended user
+
+
+BACKEND - ADMIN ROUTER (routers/admin.py):
+
+GET /api/admin/users should list all users with pagination. It accepts query parameters page (default 1) and per_page (default 20, max 100). It returns an object with users array, total count, page number, and per_page value. Protected by require_role("admin").
+
+PUT /api/admin/users/{user_id}/role should change a user's role. The request body contains a role string which must be one of the 7 valid roles. It cannot change your own role and should return 400 if attempted. Protected by require_role("admin").
+
+POST /api/admin/users/{user_id}/suspend should suspend a user. The body contains a reason string and an optional duration_days integer. It sets account_status to "suspended". Cannot suspend yourself, returns 400 if attempted. Protected by require_role("admin", "senior_moderator").
+
+POST /api/admin/users/{user_id}/reinstate should reinstate a user. It sets account_status back to "active". Protected by require_role("admin").
+
+
+BACKEND - AUTH SERVICE EXTENSIONS:
+
+Add these methods to AuthService:
+- list_users(page, per_page): paginated user list with total count
+- change_role(user_id, new_role): update a user's role
+- suspend_user(user_id, reason, duration_days): suspend with a reason
+- reinstate_user(user_id): reinstate to active status
+
+
+FRONTEND - ADMIN PAGE (admin/page.tsx):
+
+Build a full-width admin dashboard with three tabs.
+
+Tab 1 - User Management:
+A data table showing all users with columns for username (with avatar initials), display name, role (with a color-coded badge), account status (with a status badge showing green for active and red for suspended), verified status, created date, and actions (dropdown menu).
+
+The action dropdown for each user row should have options to Change Role (opens a dialog with a role selector dropdown of all 7 roles), Suspend User (opens a dialog with a reason text area and optional duration), and Reinstate User (only shown for suspended users, with confirmation).
+
+Include pagination at the bottom, a loading spinner while fetching users, a green success message after actions complete, and a refresh button to manually refresh the user list.
+
+Tab 2 - Platform Rules (stub):
+Placeholder content for future moderation rules configuration. Show categories like Hate Speech, Spam, Misinformation, Harassment, and NSFW Content.
+
+Tab 3 - System Settings (stub):
+Placeholder with toggle switches for future settings like rate limiting, maintenance mode, and registration toggle.
+
+For role badge colors use: gray for user, green/emerald for verified_creator, blue for community_moderator, indigo/purple for senior_moderator, red/rose for admin, amber/yellow for compliance_officer, and cyan for analyst.
+
+Use full-width layout since this is a management page. Create a CSS module for admin-specific styles (admin.module.css). Use shadcn Table, Badge, Button, Dialog, Select, Tabs, Textarea, and DropdownMenu components.
+
+
+ACCEPTANCE CRITERIA:
+
+Admin can see all users in a paginated table. Admin can change any user's role except their own. Admin can suspend a user with a reason. Admin can reinstate a suspended user. Role and status badges are color-coded appropriately. Actions show confirmation dialogs before executing. Success and error feedback is shown after each action. The page is inaccessible to non-admin users (403 from backend, sidebar hides the link). Loading and empty states are handled gracefully.

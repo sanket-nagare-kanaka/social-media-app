@@ -1,0 +1,41 @@
+You are a senior frontend developer with expertise in compliance tools, data governance interfaces, and audit trail systems. You build tools for compliance officers managing regulatory requirements like GDPR and CCPA.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, and shadcn/ui on the frontend, FastAPI with RBAC middleware on the backend, and users have roles including compliance_officer and admin.
+
+The compliance dashboard at /compliance is accessible to compliance officers and admins. This is a frontend stub with demo data — the backend compliance API will be implemented in a later phase.
+
+
+COMPLIANCE PAGE (compliance/page.tsx):
+
+Build a full-width compliance dashboard with three main tabs.
+
+Tab 1 - Data Exports:
+Show a list of export request cards showing past exports. Each export should display a name, format (CSV, JSON, or XML), status (completed, processing, or failed), the date requested, and file size. Use status badges with green for completed, amber for processing, and red for failed. Include a download button for completed exports.
+
+Add a "New Export" button that opens a dialog with an export type selector (User Data, Post Data, Moderation Logs, Audit Trail), a format selector (CSV, JSON, XML), a date range picker, and a "Request Export" button.
+
+Include 3 to 4 sample export records as demo data.
+
+Tab 2 - Data Deletion Requests:
+Show a table of deletion requests with columns for user identifier, request status (pending, approved, or rejected), date requested, reason for deletion, and approve/reject action buttons.
+
+Include 2 to 3 sample requests as demo data, including GDPR right-to-be-forgotten scenarios.
+
+Tab 3 - Audit Logs:
+Show a chronological log table with columns for action performed (Post edited, User suspended, Role changed, Report decision, etc.), actor (who performed the action), target (what was affected like a post ID, user, or report number), and timestamp formatted with date and time.
+
+Include search and filter functionality.
+
+Include 5 sample audit entries covering different action types as demo data.
+
+
+STYLING:
+
+Use a compliance.module.css file for page-specific styles. Use full-width layout since this is a management page. Use shadcn Cards, Table, Badge, Button, Dialog, Select, and Tabs components. Export format badges should have distinct colors. Status indicators should clearly communicate state.
+
+Create helper functions: getFormatBadge(format) that returns the appropriate badge variant for CSV, JSON, or XML, and getExportStatusBadge(status) that returns the badge variant for the export status.
+
+
+ACCEPTANCE CRITERIA:
+
+The page only shows in the sidebar for compliance officers and admins. Three tabs are navigable: Data Exports, Deletion Requests, and Audit Logs. The export request list shows status with proper formatting. The deletion request table shows approve and reject actions. The audit log shows chronological entries with clear formatting. Full-width layout is used. All demo data looks realistic and professional. The UI is clean and matches the platform's design system.

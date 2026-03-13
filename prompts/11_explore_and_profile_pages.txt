@@ -1,0 +1,60 @@
+You are a senior frontend developer building social media discovery and profile interfaces. You create engaging, Instagram-inspired pages that encourage exploration and user interaction.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, shadcn/ui, and a glassmorphic design on the frontend, FastAPI with auth and posts API on the backend. The design is Instagram-inspired with animated background, dark mode, and glassmorphism.
+
+These pages are in the (main)/ route group, meaning they have the sidebar and use the standard centered layout at 640px max-width for content.
+
+
+EXPLORE PAGE ((main)/explore/page.tsx):
+
+Build a discovery page at /explore with the following sections.
+
+Search Bar:
+A full-width search input with a Search icon. The placeholder text should say "Search posts, people, and topics..." Include a filter button to toggle advanced filters.
+
+Trending Topics Section:
+Show a "Trending Now" header with a TrendingUp icon. Display a grid or list of trending hashtags where each item shows the hashtag name with a hash prefix and Hash icon, the post count formatted with K suffix like "12.3K posts", and the trend direction like "+28%".
+
+Use this demo data with 6 trending topics: TechInnovation with 12.3K posts and +28% trend, DesignSystems with 8.9K posts and +15% trend, AIFuture with 10.2K posts and +42% trend, StartupLife with 6.7K posts and +12% trend, AIArt with 5.1K posts and +45% trend, and WebDev2025 with 4.3K posts and +9% trend.
+
+Each topic card should have hover effects and be clickable.
+
+Suggested Users Section:
+Show a "People to Follow" header with a Users icon. Display user cards showing an avatar with initials fallback, display name with a verification badge if verified, username as an @handle, bio truncated to 1 line, follower count, and a "Follow" button.
+
+Use demo data with 4 suggested users. The first should be sarah_designs with display name Sarah Chen, bio "Design systems & UI components", 12.5K followers, verified, and initials SC. Create 3 more users with different profiles.
+
+
+PROFILE PAGE ((main)/profile/page.tsx):
+
+Build a user profile page at /profile with the following sections.
+
+Profile Header:
+A large avatar at 128px diameter with an Instagram-style gradient ring around it going from orange through pink to purple. The user's initial should be displayed inside. There should be a 4px border between the ring and the initial circle.
+
+Next to the avatar, show the display name in bold large text with a verification badge if verified, the username as an @handle, and the bio text.
+
+Include action buttons: a "Follow" button with a UserPlus icon, an analytics button (icon only, outline style), and a settings button (icon only, outline style).
+
+Show a stats row with posts count as a bold number with "Posts" label below, followers count formatted like "12.5K" with "Followers" label below, and following count with "Following" label below. Each stat should have a hover effect where the text turns to the primary color.
+
+Content Tabs:
+A full-width tab bar with these tabs: Posts with a Grid3X3 icon, Replies with a MessageSquare icon, Media with an Image icon, and Bookmarks with a Bookmark icon. The active tab should have a bottom border accent.
+
+Posts Grid (under the Posts tab):
+Display a 3-column grid of square thumbnails with a 1:1 aspect ratio. Each cell is a muted placeholder for now since there are no real images. On hover, show a dark overlay with a heart icon plus like count and a message icon plus comment count. Show 9 placeholder items in the grid.
+
+Other Tabs (Replies, Media, Bookmarks):
+Show an empty state for each tab with an icon in a circle matching the tab's icon, a "No [tab name] yet" heading, a descriptive subtitle, and a dashed border container.
+
+Use static mock data for now. Show realistic-looking data for a user named Sarah Chen with username sarah_designs.
+
+
+DESIGN DETAILS:
+
+Both pages use the standard centered layout, not full-width. Use the Instagram grid pattern for the profile posts tab. The gradient ring on the avatar should match the platform's Instagram-inspired gradient. Tabs should use the shadcn/ui Tabs component with custom styling that has no background and uses a border-bottom indicator instead. The layout should be responsive and the grid should collapse gracefully on mobile.
+
+
+ACCEPTANCE CRITERIA:
+
+The explore page shows trending topics with formatted post counts. The explore page shows suggested users with follow buttons. The search bar is styled and positioned properly. The profile page has an Instagram-style avatar with gradient ring. Profile stats (posts, followers, following) are displayed. The posts grid shows a 3-column layout with hover overlay. Tab switching works and shows appropriate content or empty states. The layout is centered at 640px max-width with the sidebar. Both pages are responsive on mobile. The design feels cohesive with the rest of the platform.

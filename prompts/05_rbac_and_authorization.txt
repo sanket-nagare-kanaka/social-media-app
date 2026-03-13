@@ -1,0 +1,72 @@
+You are a senior backend security engineer with expertise in Role-Based Access Control (RBAC), JWT validation, and FastAPI middleware patterns. You follow OWASP security guidelines.
+
+I have a social publishing platform with Next.js 15 on the frontend providing a useAuth() hook, FastAPI on the backend with Supabase as the database, and Supabase Auth for JWT tokens where the frontend authenticates directly with Supabase. The database has a profiles table with a role column and a permissions table with role-resource-action entries.
+
+The platform has 7 user roles:
+- user: Can publish, comment, and interact
+- verified_creator: Can monetize and access analytics
+- community_moderator: Can review flagged content in their community
+- senior_moderator: Handles escalations across communities
+- admin: Full governance, bans, and system settings
+- compliance_officer: Audit access and data export
+- analyst: Platform-wide analytics
+
+
+BACKEND AUTH MIDDLEWARE (middleware/auth.py):
+
+Create a get_current_user dependency function that extracts the Bearer token from the Authorization header using HTTPBearer. It should validate the token by calling the Supabase Auth API at the /auth/v1/user endpoint, NOT by decoding the JWT locally. This approach works with both HS256 and ECC (P-256) JWT signing keys. Send the token as an Authorization Bearer header and the anon key as an apikey header. Extract the user ID and email from the Supabase response. Fetch the user's profile from the profiles table using the admin Supabase client. Return an AuthUser object with id (UUID), email (string), and profile (UserProfile or None). Raise 401 Unauthorized for invalid or expired tokens. Raise 503 Service Unavailable if the Supabase Auth API is unreachable. Use httpx.AsyncClient with a 10-second timeout for the HTTP call.
+
+Create a require_role dependency factory function that returns a FastAPI dependency. The usage pattern should be: dependencies=[Depends(require_role("admin", "senior_moderator"))]. It should call get_current_user internally, check that user.profile exists (raise 403 if not), check that user.profile.account_status is "active" (raise 403 with the account status message if not), check that user.profile.role is in the allowed roles list (raise 403 with required role information if not), and return the AuthUser on success.
+
+
+PYDANTIC MODELS (models/user.py):
+
+Define these schemas:
+
+UserProfile with fields: id (UUID), username (string), display_name (optional string), bio (optional string), avatar_url (optional string), role (string), account_status (string), is_verified (boolean), created_at (optional datetime), updated_at (optional datetime).
+
+AuthUser with fields: id (UUID), email (optional string), profile (optional UserProfile).
+
+UserProfileUpdate with fields: display_name (optional string), bio (optional string), avatar_url (optional string).
+
+UserRoleUpdate with field: role (string, must be one of the 7 valid roles).
+
+UserSuspendRequest with fields: reason (string), duration_days (optional integer).
+
+Permission with fields: id (UUID), role (string), resource (string), action (string).
+
+
+AUTH SERVICE (services/auth_service.py):
+
+Create an AuthService class with these methods:
+- get_profile(user_id): fetch profile by ID
+- update_profile(user_id, data): update display_name, bio, and avatar_url
+- get_permissions(role): get all permissions for a specific role
+- get_all_role_permissions(): get all permissions grouped by role, used for the help page
+
+
+AUTH ROUTER ENDPOINTS (routers/auth.py):
+
+GET /api/auth/me: Get the current user's profile. Requires any authenticated user.
+PUT /api/auth/me: Update the user's own profile. Requires any authenticated user.
+GET /api/auth/me/permissions: Get the current user's role permissions. Requires any authenticated user.
+GET /api/auth/roles/permissions: Get all roles' permissions grouped by role. This is public and used for the help page.
+
+
+ROUTE ACCESS CONTROL MATRIX:
+
+Apply require_role on these route groups:
+- /api/admin/* requires the admin role
+- /api/admin/users/{id}/suspend requires admin or senior_moderator role
+- /api/moderation/* requires community_moderator, senior_moderator, or admin role
+- /api/compliance/* requires compliance_officer or admin role
+
+
+FRONTEND ROUTE PROTECTION:
+
+The sidebar already filters navigation items by role. Additionally, the root layout.tsx or ClientLayoutWrapper should redirect unauthenticated users to /login. Auth pages should redirect authenticated users to / to prevent accessing the login page when already logged in.
+
+
+ACCEPTANCE CRITERIA:
+
+Unauthenticated API requests return 401 Unauthorized. Users with the wrong role get 403 Forbidden with a descriptive error message. Suspended users get 403 Forbidden with their account status message. Admins can access admin endpoints while regular users cannot. GET /api/auth/me returns the correct profile for the token holder. PUT /api/auth/me allows updating only display_name, bio, and avatar_url. The permissions API returns a proper role-permission matrix. Token validation is done server-side via the Supabase API, not through local JWT decoding.

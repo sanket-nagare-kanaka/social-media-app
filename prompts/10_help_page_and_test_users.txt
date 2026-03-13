@@ -1,0 +1,67 @@
+You are a senior developer building a comprehensive help and documentation page for a platform's authentication system. You create clear, well-structured documentation that helps both developers and QA testers understand and test the auth flow.
+
+I have a social publishing platform with Next.js 15, Tailwind CSS v4, and shadcn/ui on the frontend, FastAPI with Supabase Auth and RBAC supporting 7 roles on the backend. The full authentication flow with login, signup, and Google OAuth is already working. The Supabase Project ID is cbilnvuvvjnwyinfuhat.
+
+The help page is at (auth)/help/page.tsx, which is part of the auth layout (no sidebar, centered card layout). I need a comprehensive help page that documents the auth system and includes test user credentials for each role.
+
+
+CREATE TEST USERS IN SUPABASE:
+
+First, seed these test users in Supabase Auth and the profiles table:
+
+Admin: email admin@social-test.com, password Admin@123456, display name Admin User
+Community Moderator: email moderator@social-test.com, password Moderator@123456, display name Moderator User
+Verified Creator: email creator@social-test.com, password Creator@123456, display name Creator User
+Compliance Officer: email compliance@social-test.com, password Compliance@123456, display name Compliance Officer
+Analyst: email analyst@social-test.com, password Analyst@123456, display name Analyst User
+
+
+HELP PAGE ((auth)/help/page.tsx):
+
+Build a beautiful, comprehensive help page with collapsible sections.
+
+Section 1 - Test Credentials:
+Create credential cards for each test user. Each card should show the role name with a color-coded gradient badge that is unique per role, a role icon (Shield for admin, Eye for moderator, etc.), the email with a "Copy" button that uses a clipboard icon and changes to a checkmark on copy, the password with a "Copy" button, and a list of what this role can access as bullet points.
+
+Each card should have a unique gradient accent. For example, red to rose for admin, blue to indigo for moderator, emerald to green for creator, amber to orange for compliance, and cyan to sky for analyst.
+
+Include a "Try it" button or link that navigates to /login.
+
+Section 2 - Authentication Flow:
+Create a visual step-by-step flow with numbered steps:
+Step 1: User visits /login or /signup
+Step 2: Frontend sends credentials to Supabase Auth
+Step 3: Supabase returns a JWT token
+Step 4: Frontend stores the token and calls /api/auth/me
+Step 5: FastAPI validates the JWT via the Supabase Auth API
+Step 6: Backend returns the user profile with role
+
+Each step should have an icon and clear description. Show the architecture pattern: Frontend goes to Supabase Auth, which returns a JWT, which goes to FastAPI, which queries the database.
+
+Section 3 - Role Permissions:
+Build a dynamic permissions table that fetches real data from GET /api/auth/roles/permissions. Group permissions by role, showing what each role can do across resources (posts, moderation, admin, compliance, analytics) and actions (create, read, update, delete). Show a loading spinner while fetching. Include a fallback to static content if the API is unavailable.
+
+Section 4 - API Endpoints Reference:
+Create a table of all API endpoints showing the HTTP method (color-coded: green for GET, blue for POST, amber for PUT, red for DELETE), the path, a description, and the required roles. Group endpoints by category: Auth, Admin, and Posts.
+
+Section 5 - Testing Instructions:
+Provide a step-by-step guide to test the full auth flow: how to log in as different roles, how to verify role-based access restrictions, how to test creating content, how to test admin actions like user management, and how to verify that unauthorized access is properly blocked.
+
+
+UI COMPONENTS:
+
+Create these reusable sub-components within the help page:
+- Section: collapsible section with icon, title, and expand/collapse animation
+- CredentialCard: single test user credential card with copy functionality
+- FlowStep: numbered step in the auth flow visualization
+- ApiRow: single API endpoint row with method color coding
+
+
+STYLING:
+
+Use the centered layout (auth page pattern with no sidebar). Use glassmorphic cards on the animated background. Apply gradient accents unique to each role. Use ChevronDown for expand/collapse indicators. Add smooth animations for section expand and collapse. The page should be long-scrollable but each section is collapsible to save space. Include a link back to /login at the top.
+
+
+ACCEPTANCE CRITERIA:
+
+All 5 test users exist in Supabase and can log in. The help page renders without requiring authentication (accessible from the login page). Each test user credential can be copied with one click. The auth flow is clearly visualized with step-by-step progression. The permissions table dynamically loads from the API. API endpoints are properly documented with method color coding. Sections are collapsible and expandable. The page design matches the glassmorphic auth page theme. All links work correctly (login, signup, etc.).

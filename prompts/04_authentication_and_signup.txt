@@ -1,0 +1,55 @@
+You are a senior full-stack developer with deep expertise in Supabase Auth, JWT authentication flows, and Next.js client-side authentication patterns. You prioritize security best practices.
+
+I have a social publishing platform with Next.js 15 (App Router, TypeScript, Tailwind CSS v4, shadcn/ui) on the frontend, FastAPI (Python 3.12+) on the backend, and Supabase (PostgreSQL 17) as the database. The Supabase Project ID is cbilnvuvvjnwyinfuhat.
+
+The project scaffolding is complete with page stubs, sidebar, and design system. I need to implement the full authentication flow using Supabase Auth where the frontend talks directly to Supabase for auth and the backend validates JWT tokens for API requests.
+
+The architecture pattern is: Frontend sends signIn/signUp to Supabase Auth, which returns a JWT to the Frontend. The Frontend then sends the Bearer token to FastAPI Backend, which validates the JWT and executes business logic against the Supabase DB. Passwords never touch FastAPI — Supabase handles all credential management.
+
+
+DATABASE SETUP (Supabase):
+
+Create a profiles table that extends auth.users with these columns:
+- id as UUID primary key referencing auth.users(id) with cascade delete
+- username as unique text, not null
+- display_name as text, optional
+- bio as text, optional
+- avatar_url as text, optional
+- role as text defaulting to 'user', with a check constraint allowing only these 7 values: user, verified_creator, community_moderator, senior_moderator, admin, compliance_officer, analyst
+- account_status as text defaulting to 'active', with a check constraint allowing: active, suspended, banned, deactivated
+- is_verified as boolean defaulting to false
+- mfa_enabled as boolean defaulting to false
+- created_at as timestamptz defaulting to NOW()
+- updated_at as timestamptz defaulting to NOW()
+
+Create a database trigger that automatically creates a profile entry when a new user signs up via Supabase Auth. The trigger should generate a username from the email prefix (for example, "john" from "john@example.com"), handle username collisions by appending a random suffix, and set display_name from user metadata if available.
+
+Create a permissions table with columns: id as auto-generated UUID primary key, role as text, resource as text, action as text, with a unique constraint on the combination of role, resource, and action.
+
+Seed the permissions table with a comprehensive permission matrix covering all 7 roles.
+
+Enable Row Level Security (RLS) on both tables with appropriate policies.
+
+
+FRONTEND AUTH COMPONENTS:
+
+Login Page at (auth)/login/page.tsx:
+Build a glassmorphic login card centered on the animated background. Include email and password input fields with labels, a show password toggle using Eye and EyeOff icons, a Sign In button with loading state using a Loader2 spinner, a sign up link to /signup, and a Google OAuth button labeled "Continue with Google" with proper Supabase redirect. After successful login, redirect to the redirectTo query parameter or the home feed at /. Show a success message from signup redirect (like "Account created! Please sign in."). Handle and display error messages from Supabase Auth.
+
+Signup Page at (auth)/signup/page.tsx:
+Use a similar glassmorphic card design as login. Include email input, password input with show/hide toggle, confirm password input with validation, a Create Account button with loading state, a sign in link to /login, and a Google OAuth button. On success, redirect to /login?registered=true. Validate password match before submission.
+
+Auth Context at lib/auth-context.tsx:
+Create an AuthProvider that uses React Context to provide auth state globally. It should initialize by calling supabase.auth.getSession() on mount, listen for auth state changes via supabase.auth.onAuthStateChange(), fetch the user profile from the FastAPI backend (GET /api/auth/me) using the access token, and expose these values: user, session, profile, isLoading, error, signOut(), and refreshProfile(). Handle token refresh and session expiry gracefully. Set isLoading to true until the initial auth check completes to prevent flashes of wrong UI.
+
+
+BACKEND AUTH ENDPOINTS:
+
+GET /api/auth/me: Validates the Supabase JWT token and returns the user's profile from the profiles table. The response model should be UserProfile with id, username, display_name, bio, avatar_url, role, account_status, is_verified, created_at, and updated_at.
+
+PUT /api/auth/me: Allows users to update their own display_name, bio, and avatar_url. Users cannot change their own role or account_status through this endpoint.
+
+
+ACCEPTANCE CRITERIA:
+
+A user can sign up with email and password and a profile is auto-created in the database. A user can log in with email and password and is redirected to the home feed. Google OAuth sign-in works by redirecting to Google and then back to the app. The JWT token is sent as a Bearer token on all API requests. The useAuth() hook returns the correct user, session, and profile. Unauthenticated users are redirected to /login. A loading state is shown during auth initialization with no UI flash. Error messages are displayed for invalid credentials.

@@ -1,0 +1,82 @@
+You are a senior full-stack developer specializing in modern web application architecture with deep expertise in Next.js 15, FastAPI, and Supabase.
+
+I'm building a multi-tenant, enterprise-ready social publishing and moderation platform from scratch. Think of it as a professional-grade social media app with content publishing, moderation workflows, compliance controls, and role-based governance.
+
+The platform needs to support public posts, private communities, content moderation, reporting, monetization, analytics, compliance controls, and 7 different user roles.
+
+Here is the exact tech stack I want you to use:
+
+- Frontend: Next.js 15 with App Router, TypeScript, Tailwind CSS v4, and shadcn/ui components
+- Backend: FastAPI with Python 3.12+
+- Database: Supabase running PostgreSQL 17
+- Auth: Supabase Auth with JWT-based authentication
+- AI: Google Gemini API using the google-generativeai SDK
+- Icons: Lucide React
+- Fonts: Plus Jakarta Sans from Google Fonts
+
+Set up the project with the following structure and requirements:
+
+
+FRONTEND (frontend/ directory):
+
+Initialize a Next.js 15 project using the App Router with TypeScript. Install and configure Tailwind CSS v4 with the tailwindcss-animate plugin. Set up shadcn/ui components library with a components.json configuration.
+
+The directory structure should be:
+
+frontend/
+  src/
+    app/           (App Router pages)
+    components/
+      ui/          (shadcn/ui primitives)
+      layout/      (Layout components)
+    lib/           (Utilities: supabase.ts, api.ts, utils.ts)
+  public/
+  .env.local.example
+  package.json
+
+Create a .env.local.example file with three variables: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and NEXT_PUBLIC_API_URL set to http://localhost:8000.
+
+Create src/lib/supabase.ts for Supabase client initialization using @supabase/supabase-js. Create src/lib/api.ts as a fetch wrapper for calling the FastAPI backend with Bearer token support. Create src/lib/utils.ts with a cn() utility function for Tailwind class merging.
+
+
+BACKEND (backend/ directory):
+
+Initialize a FastAPI project with this structure:
+
+backend/
+  app/
+    __init__.py
+    main.py         (FastAPI entrypoint with CORS)
+    config.py       (Pydantic settings loading from .env)
+    middleware/      (Auth middleware)
+    models/          (Pydantic schemas)
+    routers/         (API route modules)
+    services/        (Business logic layer)
+    utils/           (supabase_client.py, ai_client.py)
+    workers/         (Background job handlers)
+  requirements.txt
+  .env.example
+
+main.py must include a FastAPI app with a proper title and version, CORS middleware allowing http://localhost:3000, a lifespan handler for startup and shutdown events, and a health check endpoint at /api/health.
+
+config.py must use Pydantic BaseSettings loading from .env with these variables: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY, JWT_SECRET, CORS_ORIGINS as a list, APP_NAME, and APP_VERSION.
+
+requirements.txt must include fastapi, uvicorn, supabase, python-dotenv, pydantic-settings, httpx, and google-generativeai.
+
+Create utils/supabase_client.py with a singleton Supabase client using the service role key.
+
+
+ROOT LEVEL:
+
+Create a root README.md with project title, tech stack summary, setup instructions for both frontend and backend, running instructions showing frontend on port 3000 and backend on port 8000, and a project structure overview.
+
+Create a root .gitignore covering node_modules, .next, __pycache__, .venv, and .env files.
+
+
+ACCEPTANCE CRITERIA:
+
+Running "cd frontend && npm install && npm run dev" should start without errors on port 3000.
+Running "cd backend && pip install -r requirements.txt && uvicorn app.main:app --reload" should start on port 8000.
+The /api/health endpoint should return a JSON response with status "healthy".
+Frontend should be able to import from @/lib/supabase and @/components/ui/ without errors.
+All environment variable templates must exist with clear placeholder values.
