@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.routers import auth as auth_router
 from app.routers import admin as admin_router
+from app.routers import posts as posts_router
 
 
 @asynccontextmanager
@@ -40,6 +41,7 @@ app.add_middleware(
 # Register routers
 app.include_router(auth_router.router)
 app.include_router(admin_router.router)
+app.include_router(posts_router.router)
 
 
 # Health check

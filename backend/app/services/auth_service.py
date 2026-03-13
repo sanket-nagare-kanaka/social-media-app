@@ -40,6 +40,18 @@ class AuthService:
         result = self.supabase.table("permissions").select("*").eq("role", role).execute()
         return [Permission(**p) for p in result.data] if result.data else []
 
+    async def get_all_role_permissions(self) -> dict[str, list[Permission]]:
+        """Get all permissions grouped by role."""
+        result = self.supabase.table("permissions").select("*").execute()
+        permissions = {}
+        if result.data:
+            for p in result.data:
+                role_name = p["role"]
+                if role_name not in permissions:
+                    permissions[role_name] = []
+                permissions[role_name].append(Permission(**p))
+        return permissions
+
     async def list_users(self, page: int = 1, per_page: int = 20) -> dict:
         """List all users with pagination (admin only)."""
         offset = (page - 1) * per_page

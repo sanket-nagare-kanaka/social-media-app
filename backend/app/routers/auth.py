@@ -42,3 +42,11 @@ async def get_my_permissions(
     if not user.profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     return await service.get_permissions(user.profile.role)
+
+
+@router.get("/roles/permissions", response_model=dict[str, list[Permission]])
+async def get_all_roles_permissions(
+    service: AuthService = Depends(get_auth_service),
+):
+    """Get all permissions grouped by role for the help page."""
+    return await service.get_all_role_permissions()

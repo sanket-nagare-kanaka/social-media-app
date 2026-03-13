@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -258,6 +258,28 @@ function ApiRow({ method, path, desc, roles }: {
 /*  Main Page                                                          */
 /* ------------------------------------------------------------------ */
 export default function HelpPage() {
+    const [permissionsData, setPermissionsData] = useState<Record<string, { resource: string, action: string }[]>>({});
+    const [isLoadingPerms, setIsLoadingPerms] = useState(true);
+
+    useEffect(() => {
+        const fetchPermissions = async () => {
+            try {
+                // Determine API URL (default to localhost if env var missing)
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+                const res = await fetch(`${apiUrl}/api/auth/roles/permissions`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setPermissionsData(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch permissions:", err);
+            } finally {
+                setIsLoadingPerms(false);
+            }
+        };
+        fetchPermissions();
+    }, []);
+
     return (
         <div className="flex min-h-screen w-full items-start justify-center bg-muted/30 p-4 py-8">
             <div className="w-full max-w-[900px] space-y-6">
@@ -367,55 +389,49 @@ export default function HelpPage() {
                 {/* Section 3: Roles & Permissions                               */}
                 {/* ============================================================ */}
                 <Section title="Roles & Permissions Matrix" icon={Users}>
-                    <p className="text-sm text-muted-foreground">
-                        The platform has <strong>7 roles</strong> with <strong>97 permission entries</strong> stored in the <code>permissions</code> table. Each permission is a (role, resource, action) tuple.
+                    <p className="text-sm text-muted-foreground mb-4">
+                        The platform's permissions are dynamically loaded from the database. Each role has specific access to various resources below.
                     </p>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-xs border-collapse">
-                            <thead>
-                                <tr className="border-b border-primary/10">
-                                    <th className="text-left py-2 px-2 font-bold text-muted-foreground">Role</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Posts</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Comments</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Moderation</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Reports</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Admin</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Analytics</th>
-                                    <th className="text-center py-2 px-1 font-bold text-muted-foreground">Compliance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[
-                                    { role: 'user', posts: 'CRUD', comments: 'CRUD', moderation: '—', reports: 'Create', admin: '—', analytics: '—', compliance: '—' },
-                                    { role: 'verified_creator', posts: 'CRUD', comments: 'CRUD', moderation: '—', reports: 'Create', admin: '—', analytics: 'Read', compliance: '—' },
-                                    { role: 'community_moderator', posts: 'CRUD', comments: 'CRUD', moderation: 'R/U', reports: 'CRU', admin: '—', analytics: '—', compliance: '—' },
-                                    { role: 'senior_moderator', posts: 'CRUD', comments: 'CRUD', moderation: 'R/U/E', reports: 'CRU', admin: '—', analytics: '—', compliance: '—' },
-                                    { role: 'admin', posts: 'CRUD', comments: 'CRUD', moderation: 'R/U/E', reports: 'CRU', admin: 'R/U', analytics: 'Read', compliance: 'R/E' },
-                                    { role: 'compliance_officer', posts: '—', comments: '—', moderation: '—', reports: 'Read', admin: '—', analytics: '—', compliance: 'R/E' },
-                                    { role: 'analyst', posts: '—', comments: '—', moderation: '—', reports: 'Read', admin: '—', analytics: 'Read', compliance: '—' },
-                                ].map((row) => (
-                                    <tr key={row.role} className="border-b border-primary/5 hover:bg-muted/30 transition-colors">
-                                        <td className="py-2 px-2 font-bold">
-                                            <Badge variant="outline" className="text-[10px]">{row.role}</Badge>
-                                        </td>
-                                        {['posts', 'comments', 'moderation', 'reports', 'admin', 'analytics', 'compliance'].map((col) => (
-                                            <td key={col} className="text-center py-2 px-1">
-                                                <span className={(row as Record<string, string>)[col] === '—' ? 'text-muted-foreground/40' : 'font-semibold text-foreground'}>
-                                                    {(row as Record<string, string>)[col]}
-                                                </span>
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    {isLoadingPerms ? (
+                        <div className="flex justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {Object.entries(permissionsData).map(([role, perms]) => {
+                                // Group by resource
+                                const grouped: Record<string, string[]> = {};
+                                perms.forEach(p => {
+                                    if (!grouped[p.resource]) grouped[p.resource] = [];
+                                    grouped[p.resource].push(p.action);
+                                });
 
-                    <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2">
-                        <div><strong>C</strong> = Create, <strong>R</strong> = Read, <strong>U</strong> = Update, <strong>D</strong> = Delete, <strong>E</strong> = Escalate/Export</div>
-                        <div><strong>CRUD</strong> = full Create/Read/Update/Delete access</div>
-                    </div>
+                                return (
+                                    <div key={role} className="border border-primary/10 rounded-lg p-4 bg-muted/20">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <Badge variant="outline" className="text-xs font-bold uppercase">{role.replace('_', ' ')}</Badge>
+                                            <span className="text-xs text-muted-foreground">{perms.length} permissions</span>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            {Object.entries(grouped).map(([resource, actions]) => (
+                                                <div key={resource} className="bg-background rounded p-2 text-xs border shadow-sm">
+                                                    <div className="font-bold mb-1 text-primary">{resource}</div>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {actions.map(action => (
+                                                            <Badge key={action} variant="secondary" className="text-[10px] leading-tight px-1.5 py-0">
+                                                                {action}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </Section>
 
                 {/* ============================================================ */}
